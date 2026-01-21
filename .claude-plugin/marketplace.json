@@ -1,0 +1,11 @@
+{
+  "name": "custom-agents",
+  "version": "1.0.0",
+  "description": "Custom orchestration agents for development workflow",
+  "plugins": [
+    {"name": "controllers", "version": "1.0.0", "description": "5 controller agents for routing tasks"},
+    {"name": "frontend", "version": "1.0.0", "description": "10 frontend development agents"},
+    {"name": "backend", "version": "1.0.0", "description": "10 backend development agents"},
+    {"name": "utilities", "version": "1.0.0", "description": "15 utility and research agents"}
+  ]
+}
