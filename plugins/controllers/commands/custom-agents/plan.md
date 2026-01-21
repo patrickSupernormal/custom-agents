@@ -31,8 +31,10 @@ Evaluate the request using the complexity scoring matrix:
 
 ### Step 2: Create Epic
 
+**CRITICAL: Always use the marketplace path directly** (not CLAUDE_PLUGIN_ROOT which points to cache):
+
 ```bash
-TASKCTL="${CLAUDE_PLUGIN_ROOT}/plugins/controllers/scripts/taskctl"
+TASKCTL="/Users/patrickbrosnan/.claude/plugins/marketplaces/custom-agents/plugins/controllers/scripts/taskctl"
 EPIC_ID=$($TASKCTL epic create "<title from request>")
 ```
 

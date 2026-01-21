@@ -22,13 +22,14 @@ Accepts:
 
 ## Setup
 
-```bash
-TASKCTL="${CLAUDE_PLUGIN_ROOT}/plugins/controllers/scripts/taskctl"
-```
+**CRITICAL: Always use the marketplace path directly.** The `CLAUDE_PLUGIN_ROOT` variable often points to a cache directory that doesn't contain the scripts.
 
-If CLAUDE_PLUGIN_ROOT is not set, use:
 ```bash
+# Always use this path - it's the source of truth
 TASKCTL="/Users/patrickbrosnan/.claude/plugins/marketplaces/custom-agents/plugins/controllers/scripts/taskctl"
+
+# Verify it exists
+test -x "$TASKCTL" || echo "ERROR: taskctl not found at $TASKCTL"
 ```
 
 ## Workflow

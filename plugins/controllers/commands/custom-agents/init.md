@@ -16,9 +16,13 @@ Initialize the `.tasks/` directory for task and epic management.
 
 ## Execution
 
+**CRITICAL: Always use the marketplace path directly** (not CLAUDE_PLUGIN_ROOT which points to cache):
+
 ```bash
-# Find taskctl
-TASKCTL="${CLAUDE_PLUGIN_ROOT}/plugins/controllers/scripts/taskctl"
+TASKCTL="/Users/patrickbrosnan/.claude/plugins/marketplaces/custom-agents/plugins/controllers/scripts/taskctl"
+
+# Verify it exists
+test -x "$TASKCTL" || echo "ERROR: taskctl not found at $TASKCTL"
 
 # Initialize
 $TASKCTL init
