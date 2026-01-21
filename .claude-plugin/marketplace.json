@@ -1,35 +1,61 @@
 {
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "custom-agents",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Custom orchestration agents for development workflow",
   "owner": {
     "name": "patrickSupernormal",
-    "type": "user"
+    "email": "patrick@supernormalsystems.com"
   },
   "plugins": [
     {
       "name": "controllers",
       "version": "1.0.0",
-      "description": "5 controller agents for routing tasks",
-      "source": "plugins/controllers"
+      "description": "12 orchestration controllers for routing tasks to specialists",
+      "source": "./plugins/controllers",
+      "category": "development"
     },
     {
       "name": "frontend",
       "version": "1.0.0",
-      "description": "10 frontend development agents",
-      "source": "plugins/frontend"
+      "description": "17 frontend, UI, and animation specialists",
+      "source": "./plugins/frontend",
+      "category": "development"
     },
     {
       "name": "backend",
       "version": "1.0.0",
-      "description": "10 backend development agents",
-      "source": "plugins/backend"
+      "description": "18 backend, API, and infrastructure specialists",
+      "source": "./plugins/backend",
+      "category": "development"
+    },
+    {
+      "name": "devops",
+      "version": "1.0.0",
+      "description": "10 DevOps, testing, and quality assurance agents",
+      "source": "./plugins/devops",
+      "category": "development"
+    },
+    {
+      "name": "discovery",
+      "version": "1.0.0",
+      "description": "14 research, analysis, and planning agents",
+      "source": "./plugins/discovery",
+      "category": "productivity"
+    },
+    {
+      "name": "creative",
+      "version": "1.0.0",
+      "description": "14 design, content, and communication agents",
+      "source": "./plugins/creative",
+      "category": "productivity"
     },
     {
       "name": "utilities",
       "version": "1.0.0",
-      "description": "15 utility and research agents",
-      "source": "plugins/utilities"
+      "description": "15 general utility and tool agents",
+      "source": "./plugins/utilities",
+      "category": "productivity"
     }
   ]
 }
