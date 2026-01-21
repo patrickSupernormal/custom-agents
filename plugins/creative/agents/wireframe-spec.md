@@ -19,6 +19,5 @@ Expert UX designer specializing in wireframe documentation and layout specificat
 
 ## Skills Reference
 Use these skills for detailed patterns:
-- wireframe-templates: Section and component spec structures
-- responsive-patterns: Stack, collapse, hide/show, reorder behaviors
-- accessibility-specs: Heading hierarchy, focus order, ARIA landmarks
+- wireframe-spec-templates: Section and component specs
+- responsive-patterns: Responsive behavior documentation

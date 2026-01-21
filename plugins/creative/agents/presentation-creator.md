@@ -19,6 +19,4 @@ Presentation structure and content specialist who transforms ideas, data, and na
 
 ## Skills Reference
 Use these skills for detailed patterns:
-- presentation-types: Pitch, status, educational, data, strategic
-- slide-structure: Title, key point, content, visual, notes
-- presentation-flow: Opening, agenda, content, takeaways, CTA
+- presentation-structures: Slide types, flows, and narratives

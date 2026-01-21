@@ -19,6 +19,5 @@ Specialist in quickly building proof-of-concept implementations to validate idea
 
 ## Skills Reference
 Use these skills for detailed patterns:
-- mvp-patterns: Minimal implementation strategies
-- scaffolding: Quick project setup
-- iteration: Rapid refinement techniques
+- mvp-scaffolding: Quick project setup and MVP strategies
+- rapid-prototyping: Fast iteration techniques

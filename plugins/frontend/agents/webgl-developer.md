@@ -19,7 +19,4 @@ Expert in Three.js and React Three Fiber for 3D web experiences. Creates perform
 
 ## Skills Reference
 Use these skills for detailed patterns:
-- r3f-scenes: Canvas setup and scene composition
-- glsl-shaders: Vertex/fragment shaders and uniforms
-- 3d-scroll: Scroll-driven camera and object animation
-- webgl-performance: Instancing, LOD, and optimization
+- webgl-r3f-patterns: R3F scenes, shaders, and optimization

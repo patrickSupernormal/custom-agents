@@ -19,7 +19,6 @@ Expert in web animations using GSAP, Framer Motion, and scroll-driven techniques
 
 ## Skills Reference
 Use these skills for detailed patterns:
-- gsap-animations: ScrollTrigger, timelines, and SplitText
-- framer-motion: Variants, gestures, and layout animations
-- scroll-effects: Parallax, pinning, and scrubbing
-- motion-a11y: Reduced motion and performance optimization
+- gsap-scroll-patterns: ScrollTrigger, timelines, and SplitText
+- framer-motion-variants: Variants, gestures, and layout animations
+- animation-choreography: Motion sequences and timing

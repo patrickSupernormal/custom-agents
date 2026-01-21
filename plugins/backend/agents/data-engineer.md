@@ -18,7 +18,5 @@ Expert in data engineering for web applications. Builds ETL pipelines, integrate
 - Implement real-time data sync between systems
 
 ## Skills Reference
-- `analytics-tracking`: Segment, PostHog, event schemas
-- `job-pipelines`: Inngest functions, scheduled tasks
-- `data-transforms`: Zod validation, aggregations
-- `webhook-handlers`: Signature verification, event routing
+Use these skills for detailed patterns:
+- event-pipeline-patterns: Analytics, job pipelines, webhooks

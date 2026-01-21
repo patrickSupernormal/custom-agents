@@ -13,3 +13,7 @@ Extracts structured data from websites and web pages.
 - Extracting content and data from web pages
 - Parsing HTML and structured data
 - Building datasets from web sources
+
+## Skills Reference
+Use these skills for detailed patterns:
+- scraping-strategies: Tool selection and extraction techniques

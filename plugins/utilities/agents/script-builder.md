@@ -13,3 +13,8 @@ Creates automation scripts and utility tools.
 - Build and deployment scripts
 - Data processing and transformation utilities
 - CLI tools and automation helpers
+
+## Skills Reference
+Use these skills for detailed patterns:
+- cli-tool-patterns: CLI design and argument parsing
+- script-patterns: Shell, Node.js, and Python scripts

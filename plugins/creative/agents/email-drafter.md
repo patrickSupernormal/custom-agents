@@ -19,6 +19,4 @@ Professional email drafting specialist who crafts clear, effective, and appropri
 
 ## Skills Reference
 Use these skills for detailed patterns:
-- email-structure: Subject, greeting, body, CTA, closing
-- tone-guidelines: Formal, semi-formal, casual, empathetic
-- email-templates: Common patterns for business situations
+- email-writing-patterns: Structure, tone, and email templates

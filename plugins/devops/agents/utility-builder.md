@@ -19,6 +19,4 @@ Specialist in creating standalone tools and reusable utilities that solve common
 
 ## Skills Reference
 Use these skills for detailed patterns:
-- cli-design: Argument parsing and help text
-- tool-patterns: Standalone utility structures
-- documentation: Usage and installation guides
+- cli-tool-patterns: CLI design, argument parsing, and tooling

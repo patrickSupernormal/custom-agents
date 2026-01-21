@@ -31,6 +31,10 @@ Specialist log analyst that parses, analyzes, and extracts meaningful patterns f
 4. Use Bash for counting, sorting, frequency
 5. Compile findings into report
 
+## Skills Reference
+Use these skills for detailed patterns:
+- log-analysis-patterns: Log parsing and pattern detection
+
 ## Output Format
 Log analysis with:
 - Summary statistics (entries, time range, errors)

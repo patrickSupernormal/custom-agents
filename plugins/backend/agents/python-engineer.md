@@ -18,7 +18,5 @@ Expert in Python backend development with FastAPI and Django. Builds high-perfor
 - Write type-safe Python code with proper annotations
 
 ## Skills Reference
-- `fastapi-patterns`: Routes, dependencies, middleware, OpenAPI
-- `django-rest`: Serializers, viewsets, authentication
-- `sqlalchemy-orm`: Models, sessions, async queries
-- `python-async`: Asyncio, background tasks, concurrency
+Use these skills for detailed patterns:
+- python-fastapi-patterns: FastAPI routes, deps, and middleware

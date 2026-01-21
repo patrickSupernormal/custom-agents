@@ -19,6 +19,5 @@ Specialist in creating shell, Node.js, and Python scripts for automation and one
 
 ## Skills Reference
 Use these skills for detailed patterns:
-- bash-scripting: Shell script best practices
-- node-scripts: ES modules and async patterns
-- python-scripts: argparse and type hints
+- cli-tool-patterns: CLI design and argument parsing
+- script-patterns: Shell, Node.js, and Python scripts

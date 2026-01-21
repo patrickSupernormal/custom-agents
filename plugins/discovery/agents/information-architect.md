@@ -27,6 +27,10 @@ Expert information architect specializing in website structure, navigation desig
 5. Define page templates and user flows
 6. Document cross-linking strategy
 
+## Skills Reference
+Use these skills for detailed patterns:
+- ia-frameworks: Site structure and navigation patterns
+
 ## Output Format
 IA document with:
 - User analysis and mental models

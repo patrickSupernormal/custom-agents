@@ -19,7 +19,4 @@ Expert in Astro for high-performance content sites using islands architecture, c
 
 ## Skills Reference
 Use these skills for detailed patterns:
-- astro-content: Content collections and MDX integration
-- astro-islands: Selective hydration and client directives
-- astro-routing: File-based routing and dynamic pages
-- astro-integrations: Framework components and adapters
+- astro-islands-patterns: Islands architecture and hydration

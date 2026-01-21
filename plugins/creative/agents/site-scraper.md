@@ -19,6 +19,4 @@ Expert website content extraction specialist with access to MCP scraping tools. 
 
 ## Skills Reference
 Use these skills for detailed patterns:
-- scraping-strategy: Jina, Fetch, Playwright tool selection
-- content-extraction: Per-page extraction schema
-- challenge-handling: Infinite scroll, pagination, anti-bot
+- scraping-strategies: Tool selection and extraction techniques

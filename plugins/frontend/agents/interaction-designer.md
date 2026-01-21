@@ -19,7 +19,5 @@ Expert in micro-interactions and UI polish including custom cursors, magnetic ef
 
 ## Skills Reference
 Use these skills for detailed patterns:
-- custom-cursors: Cursor tracking and contextual states
-- magnetic-effects: Attraction physics and hover zones
-- hover-animations: Scale, reveal, and morph effects
-- micro-feedback: Button states and loading indicators
+- micro-interaction-patterns: Cursors, hover, and feedback effects
+- framer-motion-variants: Gestures and animation variants

@@ -26,6 +26,10 @@ Decision analysis specialist that evaluates tradeoffs, creates decision matrices
 5. Create decision matrix and recommendation
 6. Write comprehensive decision document
 
+## Skills Reference
+Use these skills for detailed patterns:
+- decision-matrix-framework: Weighted matrices and trade-offs
+
 ## Output Format
 Decision analysis with:
 - Decision statement and context

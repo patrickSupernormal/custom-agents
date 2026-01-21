@@ -18,7 +18,5 @@ Expert in monorepo architecture with Turborepo and pnpm workspaces. Designs effi
 - Set up remote caching for faster builds
 
 ## Skills Reference
-- `turbo-config`: Tasks, dependencies, outputs, caching
-- `pnpm-workspaces`: Package structure, workspace protocol
-- `shared-packages`: UI libraries, utilities, configs
-- `monorepo-ci`: Affected detection, parallel builds
+Use these skills for detailed patterns:
+- monorepo-turborepo: Turborepo config, pnpm workspaces, caching

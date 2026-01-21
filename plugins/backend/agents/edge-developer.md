@@ -18,7 +18,5 @@ Expert in edge computing and serverless platforms. Builds low-latency APIs with 
 - Set up wrangler configuration and deployments
 
 ## Skills Reference
-- `workers-patterns`: Routes, bindings, environment variables
-- `edge-storage`: KV namespaces, D1 databases, R2 buckets
-- `durable-objects`: State management, WebSockets, alarms
-- `edge-optimization`: Bundle size, cold starts, caching
+Use these skills for detailed patterns:
+- edge-workers-patterns: Workers, bindings, and edge storage

@@ -34,6 +34,10 @@ cut -d',' -f1,3 file.csv    # Select columns
 jq 'length' file.json       # Count items
 ```
 
+## Skills Reference
+Use these skills for detailed patterns:
+- data-analysis-methodology: Analysis workflow and techniques
+
 ## Output Format
 Analysis with:
 - Dataset overview (shape, columns, types)
