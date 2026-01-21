@@ -2,10 +2,34 @@
   "name": "custom-agents",
   "version": "1.0.0",
   "description": "Custom orchestration agents for development workflow",
+  "owner": {
+    "name": "patrickSupernormal",
+    "type": "user"
+  },
   "plugins": [
-    {"name": "controllers", "version": "1.0.0", "description": "5 controller agents for routing tasks"},
-    {"name": "frontend", "version": "1.0.0", "description": "10 frontend development agents"},
-    {"name": "backend", "version": "1.0.0", "description": "10 backend development agents"},
-    {"name": "utilities", "version": "1.0.0", "description": "15 utility and research agents"}
+    {
+      "name": "controllers",
+      "version": "1.0.0",
+      "description": "5 controller agents for routing tasks",
+      "source": "plugins/controllers"
+    },
+    {
+      "name": "frontend",
+      "version": "1.0.0",
+      "description": "10 frontend development agents",
+      "source": "plugins/frontend"
+    },
+    {
+      "name": "backend",
+      "version": "1.0.0",
+      "description": "10 backend development agents",
+      "source": "plugins/backend"
+    },
+    {
+      "name": "utilities",
+      "version": "1.0.0",
+      "description": "15 utility and research agents",
+      "source": "plugins/utilities"
+    }
   ]
 }
