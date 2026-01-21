@@ -1,10 +1,23 @@
 ---
 skill: task-routing
-version: "2.0.0"
+version: "2.1.0"
 description: "Route user requests directly to specialist agents (2-tier architecture)"
+used-by:
+  - orchestrator
+  - main-thread
+see-also:
+  - complexity-detection (determine SIMPLE vs COMPLEX mode first)
+  - multi-track-orchestration (for MODERATE/COMPLEX tasks)
 ---
 
 # Task Routing Skill
+
+## Prerequisites
+
+**Before using this skill:** Run `complexity-detection.md` to determine if the request is SIMPLE, MODERATE, or COMPLEX.
+
+- **SIMPLE mode** → Use this skill (direct routing to single specialist)
+- **MODERATE/COMPLEX mode** → Use `multi-track-orchestration.md` instead
 
 ## Purpose
 
