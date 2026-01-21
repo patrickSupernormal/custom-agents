@@ -1,7 +1,7 @@
 ---
 name: custom-agents:work
 description: Execute tasks from an epic with re-anchoring and optional review
-argument-hint: "<epic-id or task-id>"
+argument-hint: "<epic-id or task-id> [--yolo]"
 ---
 
 # Execute Work
@@ -13,73 +13,145 @@ Execute tasks from an epic or a specific task using the worker agent with re-anc
 - `.tasks/` must exist
 - Epic/tasks must be created via `/custom-agents:plan`
 
+## Arguments
+
+- `<epic-id>` (e.g., `ca-1-471`) - Execute all tasks in epic (EPIC_MODE)
+- `<task-id>` (e.g., `ca-1-471.2`) - Execute single task (SINGLE_TASK_MODE)
+- `--yolo` - Continuous mode: run all tasks without stopping for confirmation
+
 ## Process
 
-### Step 1: Identify Work Unit
+### Step 1: Parse Arguments & Mode
 
 ```bash
 TASKCTL="${CLAUDE_PLUGIN_ROOT}/plugins/controllers/scripts/taskctl"
 
-# If epic-id provided, find next ready task
-if [[ "$ARGUMENTS" == ca-*-*.* ]]; then
-    TASK_ID="$ARGUMENTS"
+# Check for --yolo flag
+YOLO_MODE=false
+if [[ "$ARGUMENTS" == *"--yolo"* ]]; then
+    YOLO_MODE=true
+fi
+
+# Extract ID (remove flags)
+TARGET_ID=$(echo "$ARGUMENTS" | sed 's/--yolo//g' | xargs)
+
+# Determine mode
+if [[ "$TARGET_ID" == ca-*-*.* ]]; then
+    MODE="SINGLE_TASK"
+    TASK_ID="$TARGET_ID"
+    EPIC_ID=$(echo "$TARGET_ID" | sed 's/\.[0-9]*$//')
 else
-    # Get next ready task from epic
-    TASK_ID=$($TASKCTL task ready --epic "$ARGUMENTS" | head -1)
+    MODE="EPIC"
+    EPIC_ID="$TARGET_ID"
 fi
 ```
 
-### Step 2: Start Task
+### Step 2: Task Loop
 
-```bash
-$TASKCTL task start $TASK_ID
+**EPIC_MODE**: Loop through all ready tasks until none remain.
+**SINGLE_TASK_MODE**: Execute only the specified task, then stop.
+
+```
+while true:
+    1. Find next ready task (or use specified task in SINGLE_TASK_MODE)
+    2. Start task
+    3. Determine specialist context from task title
+    4. Spawn worker with specialist context
+    5. Verify completion
+    6. If SINGLE_TASK_MODE: break
+    7. If EPIC_MODE + YOLO: continue to next task
+    8. If EPIC_MODE + !YOLO: ask user to continue
 ```
 
-### Step 3: Spawn Worker
+### Step 3: Specialist Routing
 
-Spawn the `@worker` agent with task context:
+Determine `SPECIALIST_CONTEXT` based on task title/content:
+
+| Task Contains | Specialist |
+|--------------|------------|
+| "setup", "init", "project", "dependencies" | nextjs-developer |
+| "design", "tokens", "theme", "colors" | css-architect |
+| "component", "UI", "Button", "Input" | ui-engineer |
+| "hook", "state", "context", "store" | react-engineer |
+| "form", "validation" | react-engineer |
+| "api", "endpoint", "fetch" | api-architect |
+| "database", "schema", "query" | database-architect |
+| "auth", "login", "session" | auth-engineer |
+| "test", "spec" | test-engineer |
+| "animation", "motion" | animation-engineer |
+| default | react-engineer |
+
+### Step 4: Spawn Worker
+
+For each task, spawn the `@worker` agent:
 
 ```
 Task(@worker, """
 TASK_ID: <task-id>
 EPIC_ID: <epic-id>
 TASKCTL: ${CLAUDE_PLUGIN_ROOT}/plugins/controllers/scripts/taskctl
-SPECIALIST_CONTEXT: <appropriate specialist based on task>
+SPECIALIST_CONTEXT: <determined from routing>
 
-Execute task <task-id> following the worker protocol:
-1. Re-anchor (read spec, epic, git state)
-2. Implement per specification
-3. Verify acceptance criteria
-4. Commit changes
-5. Mark done or request review
+Execute this task following your worker protocol phases exactly.
 """)
 ```
 
-### Step 4: Handle Result
+**Worker responsibilities:**
+- Re-anchor (read spec, epic, git state)
+- Implement per specification using specialist patterns
+- Verify acceptance criteria
+- Commit changes
+- Mark done via taskctl
+
+### Step 5: Handle Result
 
 **If worker returns successfully:**
-- Task is marked done
-- Report files changed
-- Ask if user wants to continue with next task
+- Verify task status is `done`
+- Log files changed
 
 **If worker requests review (review.enabled = true):**
 - Spawn `@qa-auditor` for review
-- Handle verdict (SHIP/NEEDS_WORK/MAJOR_RETHINK)
-- Loop if NEEDS_WORK
+- Handle verdict:
+  - SHIP ✅ → continue
+  - NEEDS_WORK 🔧 → worker fixes, re-review
+  - MAJOR_RETHINK 🚨 → stop, report to user
 
 **If worker is blocked:**
-- Report blocker to user
-- Suggest resolution
+- Report blocker
+- In YOLO mode: skip to next task
+- In interactive mode: ask user
 
-### Step 5: Continue or Complete
+### Step 6: Loop Control
 
-After task completion:
-```bash
-# Check for more ready tasks
-NEXT=$($TASKCTL task ready --epic $EPIC_ID | head -1)
-```
+**SINGLE_TASK_MODE:**
+- After task completes, stop and report
 
-If more tasks ready, ask user if they want to continue.
+**EPIC_MODE + YOLO:**
+- Automatically continue to next ready task
+- Stop only when:
+  - No more ready tasks
+  - MAJOR_RETHINK verdict
+  - Unrecoverable error
+- Report progress after each task
+
+**EPIC_MODE + Interactive:**
+- After each task, ask: "Continue with next task? (yes/no)"
+- Stop if user says no
+
+### Step 7: Completion
+
+When all tasks done or stopped:
+- Show epic progress summary
+- List any blocked/pending tasks
+- Suggest next steps
+
+## YOLO Mode Notes
+
+When `--yolo` is specified:
+- No confirmation prompts between tasks
+- Runs until all tasks complete or critical error
+- Progress reported after each task
+- User can interrupt with Ctrl+C
 
 ## Target
 

@@ -24,7 +24,7 @@ A comprehensive guide to using the task orchestration system for drift-free mult
 |---------|---------|---------|
 | `/custom-agents:init` | Initialize task system | `/custom-agents:init --memory --review` |
 | `/custom-agents:plan` | Create epic from feature request | `/custom-agents:plan Add dark mode toggle` |
-| `/custom-agents:work` | Execute tasks with re-anchoring | `/custom-agents:work ca-1-abc` |
+| `/custom-agents:work` | Execute tasks with re-anchoring | `/custom-agents:work ca-1-abc --yolo` |
 | `/custom-agents:status` | Show system state and progress | `/custom-agents:status ca-1-abc` |
 | `/custom-agents:next` | Get next actionable task | `/custom-agents:next --start` |
 
@@ -158,6 +158,39 @@ This finds the next ready task and spawns a worker agent.
 ```bash
 /custom-agents:work <task-id>
 ```
+
+### YOLO Mode (Continuous Execution)
+
+```bash
+/custom-agents:work <epic-id> --yolo
+```
+
+YOLO mode runs through all tasks continuously without asking for confirmation:
+- Automatically advances to next ready task after each completion
+- Stops only when: all tasks done, critical error, or MAJOR_RETHINK verdict
+- Progress reported after each task
+- User can interrupt with Ctrl+C
+
+**Use YOLO mode when:**
+- You trust the plan and want hands-off execution
+- Working on well-defined, lower-risk features
+- Running overnight or during breaks
+
+### Specialist Routing
+
+The worker automatically selects a specialist context based on task content:
+
+| Task Type | Specialist |
+|-----------|------------|
+| Setup, dependencies | @nextjs-developer |
+| Design tokens, theme | @css-architect |
+| UI components | @ui-engineer |
+| Hooks, state | @react-engineer |
+| API, endpoints | @api-architect |
+| Database, schema | @database-architect |
+| Auth, login | @auth-engineer |
+| Tests | @test-engineer |
+| Animation | @animation-engineer |
 
 ### The Worker Protocol
 
