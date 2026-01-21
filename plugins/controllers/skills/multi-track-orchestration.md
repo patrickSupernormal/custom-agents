@@ -21,9 +21,9 @@ requires:
 
 The orchestration system uses `taskctl` for persistent state management across sessions.
 
-**Location:** `/Users/patrickbrosnan/.claude/plugins/marketplaces/custom-agents/plugins/controllers/scripts/taskctl`
+**Location:** `.tasks/bin/taskctl` (project-local, copied during init)
 
-**CRITICAL:** Always use this direct marketplace path. The `CLAUDE_PLUGIN_ROOT` variable often points to a cache directory that doesn't contain the scripts.
+**IMPORTANT:** The taskctl script is copied to the project during `/custom-agents:init`. Always use the project-local path.
 
 ### Key Commands
 ```bash
@@ -298,7 +298,7 @@ Spawn agents for each track, respecting dependencies and tracking progress.
              ## Task Configuration
              TASK_ID: $TASK_ID
              EPIC_ID: $EPIC_ID
-             TASKCTL: /Users/patrickbrosnan/.claude/plugins/marketplaces/custom-agents/plugins/controllers/scripts/taskctl
+             TASKCTL: .tasks/bin/taskctl
              SPECIALIST_CONTEXT: $track.specialist
 
              ## Specialist Role

@@ -11,39 +11,96 @@ Initialize the `.tasks/` directory for task and epic management.
 ## What This Does
 
 1. Creates `.tasks/` directory structure
-2. Optionally enables memory system (`--memory`)
-3. Optionally enables review gating (`--review`)
+2. Copies taskctl to `.tasks/bin/` for project-local usage
+3. Optionally enables memory system (`--memory`)
+4. Optionally enables review gating (`--review`)
 
-## Execution
+## Step 0: Resolve Plugin Path
 
-**CRITICAL: Always use the marketplace path directly** (not CLAUDE_PLUGIN_ROOT which points to cache):
+The plugin root is the parent of this command's directory. From this file's location, go up to find `scripts/` and `.claude-plugin/`.
+
+Example: if this file is at `~/.claude/plugins/cache/.../custom-agents/2.2.0/plugins/controllers/commands/custom-agents/init.md`, then plugin root is `~/.claude/plugins/cache/.../custom-agents/2.2.0/plugins/controllers/`.
+
+Store this as `PLUGIN_ROOT` for use in later steps.
+
+## Step 1: Create Directory Structure
 
 ```bash
-TASKCTL="/Users/patrickbrosnan/.claude/plugins/marketplaces/custom-agents/plugins/controllers/scripts/taskctl"
-
-# Verify it exists
-test -x "$TASKCTL" || echo "ERROR: taskctl not found at $TASKCTL"
-
-# Initialize
-$TASKCTL init
+mkdir -p .tasks/epics .tasks/specs .tasks/tasks .tasks/bin
 ```
 
-**If `--memory` argument provided:**
+## Step 2: Copy Files
+
+**IMPORTANT: Copy using absolute paths from PLUGIN_ROOT:**
+
 ```bash
-$TASKCTL memory init
+# Copy taskctl CLI
+cp "${PLUGIN_ROOT}/scripts/taskctl.py" .tasks/bin/taskctl.py
+chmod +x .tasks/bin/taskctl.py
+
+# Create wrapper script
+cat > .tasks/bin/taskctl << 'EOF'
+#!/bin/bash
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+exec python3 "$DIR/taskctl.py" "$@"
+EOF
+chmod +x .tasks/bin/taskctl
+
+# Copy worker protocol
+cp "${PLUGIN_ROOT}/agents/worker.md" .tasks/worker.md
 ```
 
-**If `--review` argument provided:**
+## Step 3: Create Config Files
+
+Create `.tasks/meta.json`:
+```json
+{
+  "schema_version": 1,
+  "setup_version": "1.0.0"
+}
+```
+
+Create `.tasks/config.json`:
+```json
+{
+  "memory": {"enabled": false},
+  "review": {"enabled": false}
+}
+```
+
+## Step 4: Optional Features
+
+**If `--memory` in arguments:**
 ```bash
-$TASKCTL review init
+.tasks/bin/taskctl memory init
 ```
 
-## After Initialization
+**If `--review` in arguments:**
+```bash
+.tasks/bin/taskctl review init
+```
 
-Report to user:
-- `.tasks/` directory created
-- Which optional features were enabled
-- Suggest running `/custom-agents:plan` to create first epic
+## Step 5: Report to User
+
+```
+Custom-Agents initialized!
+
+Created:
+- .tasks/bin/taskctl (CLI tool)
+- .tasks/bin/taskctl.py
+- .tasks/worker.md (worker protocol)
+- .tasks/epics/
+- .tasks/specs/
+- .tasks/tasks/
+
+Configuration:
+- Memory: <enabled|disabled>
+- Review: <enabled|disabled>
+
+Next steps:
+- Run /custom-agents:plan <feature> to create your first epic
+- Use .tasks/bin/taskctl --help for CLI usage
+```
 
 ## Arguments
 

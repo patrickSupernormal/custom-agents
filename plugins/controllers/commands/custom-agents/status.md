@@ -10,13 +10,10 @@ Display the current state of the task management system.
 
 ## Execution
 
-**CRITICAL: Always use the marketplace path directly** (not CLAUDE_PLUGIN_ROOT which points to cache):
+**Use the project-local taskctl** (copied to `.tasks/bin/` during init):
 
 ```bash
-TASKCTL="/Users/patrickbrosnan/.claude/plugins/marketplaces/custom-agents/plugins/controllers/scripts/taskctl"
-
-# Verify it exists
-test -x "$TASKCTL" || echo "ERROR: taskctl not found at $TASKCTL"
+TASKCTL=".tasks/bin/taskctl"
 
 # Overall status
 $TASKCTL status

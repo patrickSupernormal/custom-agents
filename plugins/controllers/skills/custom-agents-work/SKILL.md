@@ -22,14 +22,13 @@ Accepts:
 
 ## Setup
 
-**CRITICAL: Always use the marketplace path directly.** The `CLAUDE_PLUGIN_ROOT` variable often points to a cache directory that doesn't contain the scripts.
+**Use the project-local taskctl** (copied to `.tasks/bin/` during init):
 
 ```bash
-# Always use this path - it's the source of truth
-TASKCTL="/Users/patrickbrosnan/.claude/plugins/marketplaces/custom-agents/plugins/controllers/scripts/taskctl"
+TASKCTL=".tasks/bin/taskctl"
 
 # Verify it exists
-test -x "$TASKCTL" || echo "ERROR: taskctl not found at $TASKCTL"
+test -x "$TASKCTL" || echo "ERROR: taskctl not found - run /custom-agents:init first"
 ```
 
 ## Workflow
@@ -96,10 +95,10 @@ Implement custom-agents task.
 
 TASK_ID: <task-id>
 EPIC_ID: <epic-id>
-TASKCTL: <full-path-to-taskctl>
+TASKCTL: .tasks/bin/taskctl
 
 Read the worker protocol at:
-/Users/patrickbrosnan/.claude/plugins/marketplaces/custom-agents/plugins/controllers/agents/worker.md
+.tasks/worker.md
 
 Follow the phases in worker.md exactly. Do not skip re-anchoring.
 """

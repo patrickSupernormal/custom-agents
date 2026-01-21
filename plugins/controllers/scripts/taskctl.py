@@ -242,12 +242,23 @@ def cmd_init(args: argparse.Namespace) -> None:
     """Initialize .tasks/ directory structure.
 
     Idempotent - returns success if already exists.
+    Also copies taskctl to .tasks/bin/ for project-local usage.
     """
+    import shutil
+    import stat
+
     tasks_dir = Path.cwd() / TASKS_DIR
+    bin_dir = tasks_dir / "bin"
+    taskctl_dest = bin_dir / "taskctl"
 
     if tasks_dir.exists():
-        # Already initialized - this is fine
-        msg(f"{TASKS_DIR}/ already exists in {Path.cwd()}")
+        # Already initialized - but ensure bin/taskctl exists
+        if not taskctl_dest.exists():
+            bin_dir.mkdir(exist_ok=True)
+            _copy_taskctl_to_bin(taskctl_dest)
+            msg(f"Added {TASKS_DIR}/bin/taskctl")
+        else:
+            msg(f"{TASKS_DIR}/ already exists in {Path.cwd()}")
         return
 
     # Create directory structure
@@ -255,6 +266,10 @@ def cmd_init(args: argparse.Namespace) -> None:
     (tasks_dir / "epics").mkdir()
     (tasks_dir / "specs").mkdir()
     (tasks_dir / "tasks").mkdir()
+    bin_dir.mkdir()
+
+    # Copy taskctl script to bin directory
+    _copy_taskctl_to_bin(taskctl_dest)
 
     # Create meta.json
     write_json(tasks_dir / "meta.json", {
@@ -269,6 +284,22 @@ def cmd_init(args: argparse.Namespace) -> None:
     })
 
     msg(f"Initialized {TASKS_DIR}/ directory in {Path.cwd()}")
+    msg(f"taskctl available at: {taskctl_dest}")
+
+
+def _copy_taskctl_to_bin(dest: Path) -> None:
+    """Copy this script to the destination and make it executable."""
+    import shutil
+    import stat
+
+    # Get the path to this script
+    src = Path(__file__).resolve()
+
+    # Copy the script
+    shutil.copy2(src, dest)
+
+    # Make executable
+    dest.chmod(dest.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
 
 
 def cmd_detect(args: argparse.Namespace) -> None:
