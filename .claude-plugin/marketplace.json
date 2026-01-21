@@ -9,9 +9,9 @@
   },
   "plugins": [
     {
-      "name": "controllers",
-      "version": "1.0.0",
-      "description": "12 orchestration controllers for routing tasks to specialists",
+      "name": "custom-agents",
+      "version": "2.2.0",
+      "description": "Task orchestration with taskctl CLI, worker agent, re-anchoring, review gating, and guard hooks",
       "source": "./plugins/controllers",
       "category": "development"
     },

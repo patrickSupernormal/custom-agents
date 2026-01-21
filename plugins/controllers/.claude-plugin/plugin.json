@@ -1,0 +1,9 @@
+{
+  "name": "custom-agents",
+  "version": "2.2.0",
+  "description": "Task orchestration system with taskctl CLI, worker agent, re-anchoring, review gating, and guard hooks",
+  "author": {
+    "name": "patrickSupernormal",
+    "email": "patrick@supernormalsystems.com"
+  }
+}
