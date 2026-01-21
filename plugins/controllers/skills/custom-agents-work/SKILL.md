@@ -38,6 +38,30 @@ If CLAUDE_PLUGIN_ROOT is not set, use the marketplace path:
 TASKCTL="/Users/patrickbrosnan/.claude/plugins/marketplaces/custom-agents/plugins/controllers/scripts/taskctl"
 ```
 
+## Phase 0: Validate Working Directory
+
+**CRITICAL: `.tasks/` must be in the CURRENT WORKING DIRECTORY.**
+
+The skill will NOT search parent directories. You must be in the project root.
+
+```bash
+# Check current directory
+pwd
+
+# Detect .tasks/ in current directory
+$TASKCTL detect --json
+```
+
+**If `.tasks/` not found:**
+1. Check if you're in the right directory
+2. If in project root but no `.tasks/`, run `/custom-agents:init` first
+3. If in wrong directory, `cd` to project root first
+
+**Example detection output:**
+```json
+{"success": true, "exists": true, "valid": true, "path": "/path/to/project/.tasks", "cwd": "/path/to/project"}
+```
+
 ## Phase 1: Parse Input
 
 ```bash

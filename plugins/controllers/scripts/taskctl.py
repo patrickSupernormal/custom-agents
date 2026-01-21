@@ -71,15 +71,13 @@ def generate_id_suffix() -> str:
 
 
 def find_tasks_root() -> Optional[Path]:
-    """Find .tasks/ directory by walking up from cwd."""
-    current = Path.cwd()
-    while current != current.parent:
-        tasks_dir = current / TASKS_DIR
-        if tasks_dir.is_dir():
-            return tasks_dir
-        current = current.parent
-    # Check root
-    tasks_dir = current / TASKS_DIR
+    """Find .tasks/ directory in current working directory only.
+
+    Unlike git which walks up to find .git/, we require .tasks/ to be
+    in the current directory. This prevents confusion when running from
+    different directories.
+    """
+    tasks_dir = Path.cwd() / TASKS_DIR
     if tasks_dir.is_dir():
         return tasks_dir
     return None
@@ -241,11 +239,16 @@ def set_nested_value(d: Dict, key: str, value: Any) -> None:
 # ============================================================================
 
 def cmd_init(args: argparse.Namespace) -> None:
-    """Initialize .tasks/ directory structure."""
+    """Initialize .tasks/ directory structure.
+
+    Idempotent - returns success if already exists.
+    """
     tasks_dir = Path.cwd() / TASKS_DIR
 
     if tasks_dir.exists():
-        error(f"{TASKS_DIR}/ already exists")
+        # Already initialized - this is fine
+        msg(f"{TASKS_DIR}/ already exists in {Path.cwd()}")
+        return
 
     # Create directory structure
     tasks_dir.mkdir()
@@ -265,7 +268,39 @@ def cmd_init(args: argparse.Namespace) -> None:
         "review": {"enabled": False}
     })
 
-    msg(f"Initialized {TASKS_DIR}/ directory")
+    msg(f"Initialized {TASKS_DIR}/ directory in {Path.cwd()}")
+
+
+def cmd_detect(args: argparse.Namespace) -> None:
+    """Check if .tasks/ exists in current directory.
+
+    Returns JSON with exists, valid, and path information.
+    """
+    tasks_dir = Path.cwd() / TASKS_DIR
+    exists = tasks_dir.is_dir()
+
+    result = {
+        "success": True,
+        "exists": exists,
+        "valid": False,
+        "path": str(tasks_dir) if exists else None,
+        "cwd": str(Path.cwd())
+    }
+
+    if exists:
+        # Check if it's valid (has required subdirs)
+        required = ["epics", "specs", "tasks"]
+        result["valid"] = all((tasks_dir / d).is_dir() for d in required)
+
+    if args.json:
+        print(json.dumps(result))
+    else:
+        if exists and result["valid"]:
+            msg(f"Found valid {TASKS_DIR}/ at {tasks_dir}")
+        elif exists:
+            msg(f"Found {TASKS_DIR}/ at {tasks_dir} but it's invalid (missing subdirs)")
+        else:
+            msg(f"No {TASKS_DIR}/ in current directory ({Path.cwd()})")
 
 
 # ============================================================================
@@ -1132,6 +1167,10 @@ def main() -> None:
     # init
     subparsers.add_parser("init", help="Initialize .tasks/ directory")
 
+    # detect
+    detect_parser = subparsers.add_parser("detect", help="Check if .tasks/ exists")
+    detect_parser.add_argument("--json", action="store_true", help="Output as JSON")
+
     # status
     subparsers.add_parser("status", help="Show current state summary")
 
@@ -1268,6 +1307,8 @@ def main() -> None:
     # Route to handlers
     if args.command == "init":
         cmd_init(args)
+    elif args.command == "detect":
+        cmd_detect(args)
     elif args.command == "status":
         cmd_status(args)
     elif args.command == "epic":
