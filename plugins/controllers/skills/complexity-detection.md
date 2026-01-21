@@ -161,6 +161,52 @@ After complexity detection:
 - **MODERATE:** Use `multi-track-orchestration.md` with 2-3 tracks
 - **COMPLEX:** Use full `multi-track-orchestration.md` with all 5 phases
 
+### Epic Creation Trigger
+
+For MODERATE and COMPLEX modes, create an epic to persist state:
+
+```bash
+# Initialize state directory (safe to run multiple times)
+taskctl init
+
+# Create epic with complexity score context
+EPIC_ID=$(taskctl epic create "[Brief task description]")
+
+# Write complexity assessment to epic spec
+# The spec at .tasks/specs/$EPIC_ID.md should include:
+# - Original request
+# - Complexity score breakdown
+# - Mode determination
+# - Rationale for decomposition approach
+```
+
+**When to Create Epic:**
+- MODERATE mode (score 3-4): Yes, create epic
+- COMPLEX mode (score 5+): Yes, create epic
+- SIMPLE mode (score 0-2): No epic (direct routing)
+
+**Epic Spec Template:**
+```markdown
+# [Task Title]
+
+## Original Request
+[User's original request verbatim]
+
+## Complexity Assessment
+- **Score:** [X]
+- **Mode:** [MODERATE/COMPLEX]
+- **Signals:**
+  - [Signal 1]: +X points
+  - [Signal 2]: +X points
+
+## Decomposition Approach
+[Brief explanation of how task will be broken down]
+
+## Acceptance Criteria
+- [ ] [Criterion 1]
+- [ ] [Criterion 2]
+```
+
 ## Quality Checklist
 
 - [ ] All keywords extracted from request

@@ -94,26 +94,54 @@ Then route to appropriate specialist.
 
 ## Common Patterns
 
-### Single Domain Task
+### Single Domain Task (Direct)
 ```
 Main thread → Task(@specialist) → Synthesize result
+```
+
+### Single Domain Task (Worker Pattern - Recommended for Complex Tasks)
+Even in SIMPLE mode, the worker pattern provides drift prevention:
+```
+Main thread → Task(@worker, """
+  TASK_ID: [optional, for ad-hoc tasks]
+  SPECIALIST_CONTEXT: react-engineer
+
+  ## Task
+  [Clear task description]
+
+  ## Acceptance Criteria
+  - [Criterion 1]
+  - [Criterion 2]
+
+  Begin with re-anchoring (check git state, read relevant files).
+""") → Synthesize result
 ```
 
 ### Multi-Domain Task
 ```
 Main thread:
-├── Task(@specialist-1) [parallel]
-├── Task(@specialist-2) [parallel]
-└── Task(@specialist-3) [parallel]
+├── Task(@worker, SPECIALIST_CONTEXT: specialist-1) [parallel]
+├── Task(@worker, SPECIALIST_CONTEXT: specialist-2) [parallel]
+└── Task(@worker, SPECIALIST_CONTEXT: specialist-3) [parallel]
 → Synthesize all results
 ```
 
 ### Sequential Task
 ```
-Main thread → Task(@specialist-1)
-           → Task(@specialist-2) [uses output from 1]
+Main thread → Task(@worker, SPECIALIST_CONTEXT: specialist-1)
+           → Task(@worker, SPECIALIST_CONTEXT: specialist-2) [uses output from 1]
            → Synthesize
 ```
+
+## When to Use Worker vs Direct Specialist
+
+| Scenario | Recommended | Why |
+|----------|-------------|-----|
+| Quick fix, single file | Direct @specialist | Low overhead |
+| Multi-step implementation | @worker | Drift prevention |
+| After context compaction | @worker | Fresh context guaranteed |
+| Part of larger epic | @worker | Consistent state tracking |
+| Ad-hoc question/explanation | Direct @specialist | No implementation needed |
 
 ## Quality Checklist
 

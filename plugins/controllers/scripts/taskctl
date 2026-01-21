@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# taskctl - Task state management CLI for custom-agents
+# Wrapper script to invoke taskctl.py
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PYTHON_SCRIPT="$SCRIPT_DIR/taskctl.py"
+
+# Find Python 3
+if command -v python3 &> /dev/null; then
+    PYTHON=python3
+elif command -v python &> /dev/null; then
+    PYTHON=python
+else
+    echo "Error: Python 3 is required but not found" >&2
+    exit 1
+fi
+
+exec "$PYTHON" "$PYTHON_SCRIPT" "$@"

@@ -1,6 +1,6 @@
 ---
 skill: multi-track-orchestration
-version: "1.0.0"
+version: "2.0.0"
 description: "5-phase orchestration system for complex tasks: ASSESS → DECOMPOSE → EXECUTE → SYNTHESIZE → FOLLOW-UP"
 used-by:
   - orchestrator
@@ -12,7 +12,48 @@ requires:
   - parallel-execution
   - dependency-management
   - synthesis-patterns
+  - re-anchoring
 ---
+
+# State Management Integration
+
+## taskctl CLI
+
+The orchestration system uses `taskctl` for persistent state management across sessions.
+
+**Location:** `$CLAUDE_PLUGIN_ROOT/plugins/controllers/scripts/taskctl`
+
+### Key Commands
+```bash
+# Initialize (first time only)
+taskctl init
+
+# Epic management (ASSESS/DECOMPOSE phases)
+taskctl epic create "<title>"           # Returns epic ID (ca-N-xxx)
+taskctl epic set-status <id> <status>   # planning|ready|in_progress|done
+
+# Task management (EXECUTE phase)
+taskctl task create <epic-id> "<title>" # Returns task ID (ca-N-xxx.M)
+taskctl task set-depends <id> <deps...> # Set dependencies
+taskctl task start <id>                 # Mark in_progress
+taskctl task done <id> --summary "..."  # Mark completed
+
+# Queries
+taskctl next                            # Get next actionable unit
+taskctl task ready --epic <id>          # List ready tasks (deps resolved)
+taskctl cat <id>                        # Output spec for re-anchoring
+```
+
+### State Directory
+```
+.tasks/
+├── meta.json           # Schema version
+├── config.json         # User preferences
+├── epics/<id>.json     # Epic metadata
+├── specs/<id>.md       # Epic specification
+├── tasks/<id>.json     # Task metadata
+└── tasks/<id>.md       # Task specification
+```
 
 # Multi-Track Orchestration Skill
 
@@ -87,14 +128,28 @@ Determine whether to use simple routing or full multi-track orchestration.
    **Next Phase:** [DECOMPOSE or Direct Routing]
    ```
 
+5. **Create Epic for Persistent State** (MODERATE/COMPLEX only)
+   ```bash
+   # Ensure .tasks/ exists
+   taskctl init  # Safe to run multiple times
+
+   # Create epic to track this orchestration
+   EPIC_ID=$(taskctl epic create "[Brief task description]")
+   # Example: EPIC_ID=ca-1-f7k
+
+   # Store complexity score in epic
+   # (done automatically via spec markdown)
+   ```
+
 ### If SIMPLE Mode
 Skip to direct routing using `task-routing.md`:
 ```
 Main thread → Task(@specialist) → Synthesize
 ```
+Note: SIMPLE mode does NOT create an epic (overhead not justified).
 
 ### If MODERATE/COMPLEX Mode
-Continue to Phase 2: DECOMPOSE
+Continue to Phase 2: DECOMPOSE with created EPIC_ID
 
 ## Phase 2: DECOMPOSE
 
@@ -102,6 +157,36 @@ Continue to Phase 2: DECOMPOSE
 Break the request into component-based tracks with dependencies mapped.
 
 ### Procedure
+
+0. **Parallel Research (for implementation tasks)**
+
+   Before decomposing, gather context using the `parallel-research.md` skill:
+
+   ```
+   # Spawn scouts in parallel (SINGLE message)
+   Task(@repo-scout, "Find patterns for: [topic]")
+   Task(@context-scout, "Extract signatures for: [topic]")
+   Task(@practice-scout, "Research best practices for: [topic]")
+   Task(@docs-scout, "Find documentation for: [frameworks]")
+   Task(@memory-scout, "Search memory for: [topic]")  # if memory.enabled
+   ```
+
+   **Scout Selection Guide:**
+   | Scout | When to Include |
+   |-------|-----------------|
+   | repo-scout | Always (existing patterns) |
+   | context-scout | When types/interfaces matter |
+   | practice-scout | New features, security-sensitive |
+   | docs-scout | External library integration |
+   | memory-scout | If `.tasks/memory/` exists |
+
+   **Wait for all scouts to complete, then synthesize:**
+   - Patterns to follow
+   - Pitfalls to avoid
+   - Best practices to apply
+   - Types to use
+
+   This research informs the track decomposition below.
 
 1. **Identify Request Domain**
    - Development (building)
@@ -126,27 +211,47 @@ Break the request into component-based tracks with dependencies mapped.
    - Identify blocking dependencies
    - Determine critical path
 
-4. **Create Execution Plan**
+4. **Create Tasks in State System**
+   ```bash
+   # For each track identified, create a task
+   TASK1=$(taskctl task create $EPIC_ID "Market analysis research")
+   TASK2=$(taskctl task create $EPIC_ID "Design tokens - color, typography")
+   TASK3=$(taskctl task create $EPIC_ID "Page layout structure")
+   TASK4=$(taskctl task create $EPIC_ID "UI component implementation")
+   TASK5=$(taskctl task create $EPIC_ID "API endpoints")
+
+   # Set dependencies
+   taskctl task set-depends $TASK3 $TASK2    # layout depends on tokens
+   taskctl task set-depends $TASK4 $TASK2 $TASK3  # components depend on tokens + layout
+   ```
+
+5. **Create Execution Plan**
    ```markdown
    ## Track Decomposition
 
    **Request:** [original request]
    **Domain:** [identified domain]
+   **Epic:** [EPIC_ID]
    **Tracks:** [count]
 
    ### Track List
-   | # | Track | Component | Specialist | Depends On |
-   |---|-------|-----------|------------|------------|
-   | 1 | research | Market analysis | @web-researcher | - |
-   | 2 | design-tokens | Color, typography | @css-architect | - |
-   | 3 | layout | Page structure | @react-engineer | Track 2 |
-   | 4 | components | UI elements | @react-engineer | Track 2, 3 |
-   | 5 | api | Backend endpoints | @api-architect | Track 1 |
+   | # | Task ID | Component | Specialist | Depends On |
+   |---|---------|-----------|------------|------------|
+   | 1 | ca-1-f7k.1 | Market analysis | @web-researcher | - |
+   | 2 | ca-1-f7k.2 | Design tokens | @css-architect | - |
+   | 3 | ca-1-f7k.3 | Page structure | @react-engineer | .2 |
+   | 4 | ca-1-f7k.4 | UI elements | @react-engineer | .2, .3 |
+   | 5 | ca-1-f7k.5 | Backend endpoints | @api-architect | .1 |
 
    ### Execution Waves
-   - Wave 1 (parallel): Track 1, Track 2
-   - Wave 2 (after Wave 1): Track 3, Track 5
-   - Wave 3 (after Wave 2): Track 4
+   - Wave 1 (parallel): .1, .2
+   - Wave 2 (after Wave 1): .3, .5
+   - Wave 3 (after Wave 2): .4
+   ```
+
+6. **Update Epic Status**
+   ```bash
+   taskctl epic set-status $EPIC_ID ready
    ```
 
 ## Phase 3: EXECUTE
@@ -172,22 +277,57 @@ Spawn agents for each track, respecting dependencies and tracking progress.
    ```
 
 2. **Execute Wave by Wave**
+
+   **IMPORTANT:** Use the `@worker` agent for all task execution. The worker provides:
+   - Fresh context per task (no accumulated drift)
+   - Mandatory re-anchoring before implementation
+   - Consistent completion patterns
+
    ```
    for each wave in execution_plan:
        parallel_tracks = get_tracks_for_wave(wave)
 
-       # Spawn all tracks in wave simultaneously
+       # Mark tasks as started and spawn worker agents
        for track in parallel_tracks:
-           Task(@track.specialist, track.prompt)
+           taskctl task start $TASK_ID
+
+           # Spawn worker with specialist context
+           Task(@worker, """
+             ## Task Configuration
+             TASK_ID: $TASK_ID
+             EPIC_ID: $EPIC_ID
+             TASKCTL: $CLAUDE_PLUGIN_ROOT/plugins/controllers/scripts/taskctl
+             SPECIALIST_CONTEXT: $track.specialist
+
+             ## Specialist Role
+             You are acting as @$track.specialist for this task.
+             Apply the patterns, conventions, and expertise of that role.
+
+             ## Instructions
+             1. Complete Phase 1 (Re-anchor) - read spec, epic, git state
+             2. Complete Phase 2 (Implement) - follow spec exactly
+             3. Complete Phase 3 (Verify) - check criteria, commit
+             4. Complete Phase 4 (Complete) - mark done, return summary
+
+             Begin with re-anchoring: taskctl cat $TASK_ID
+           """)
            update_todo(track, status="in_progress")
 
        # Wait for wave completion
        wait_for_all(parallel_tracks)
 
-       # Update state
+       # Worker marks task done internally; verify and update orchestrator state
        for track in parallel_tracks:
-           update_todo(track, status="completed", output=result)
+           # Verify task is done
+           taskctl task show $TASK_ID  # Confirm status=done
+           update_todo(track, status="completed", output=worker_summary)
    ```
+
+   **Worker vs Direct Specialist:**
+   | Approach | Context | Re-anchor | Completion |
+   |----------|---------|-----------|------------|
+   | `@worker` (recommended) | Fresh per task | Mandatory | Consistent |
+   | `@specialist` (legacy) | Accumulated | Optional | Variable |
 
 3. **Handle Track Failures**
    - If track fails → spawn @debugger
@@ -300,6 +440,18 @@ Automatically spawn quality and validation agents to ensure complete, production
    - All follow-ups passed
    - No critical issues remaining
    - Final synthesis delivered
+
+6. **Mark Epic Complete**
+   ```bash
+   # Verify all tasks done
+   taskctl task list --epic $EPIC_ID --status done
+
+   # Mark epic as done
+   taskctl epic set-status $EPIC_ID done
+
+   # Final status
+   taskctl status
+   ```
 
 ## State Tracking via TodoWrite
 

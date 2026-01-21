@@ -270,6 +270,98 @@ Investigate and fix errors:
 - Prevention strategy
 ```
 
+## Memory Capture Triggers
+
+When memory is enabled (`taskctl config get memory.enabled`), automatically capture learnings:
+
+### Pitfall Capture
+
+| Event | Capture Action | Priority |
+|-------|----------------|----------|
+| @debugger fixes non-obvious bug | `taskctl memory add --type pitfall "[description]"` | HIGH |
+| @qa-auditor finds pattern issue | `taskctl memory add --type pitfall "[issue]"` | HIGH |
+| Build fails unexpectedly | `taskctl memory add --type pitfall "[cause]"` | MEDIUM |
+| Review verdict: NEEDS_WORK | `taskctl memory add --type pitfall "[what was wrong]"` | HIGH |
+
+**Pitfall Template:**
+```markdown
+## [Date] - [Short descriptive title]
+
+**Context:** What we were trying to do
+**Problem:** What went wrong or was missed
+**Solution:** How it was fixed
+**Prevention:** How to avoid this in the future
+
+Tags: #[domain] #[technology]
+```
+
+### Convention Capture
+
+| Event | Capture Action | Priority |
+|-------|----------------|----------|
+| New pattern established | `taskctl memory add --type convention "[pattern]"` | MEDIUM |
+| @qa-auditor recommends pattern | `taskctl memory add --type convention "[recommendation]"` | MEDIUM |
+| Code review establishes standard | `taskctl memory add --type convention "[standard]"` | MEDIUM |
+
+**Convention Template:**
+```markdown
+## [Convention Name]
+
+**Pattern:** Description of what to do
+**Example:**
+```typescript
+// Code example showing correct usage
+```
+**Applies to:** Where/when this convention applies
+**Rationale:** Why we follow this pattern
+
+Tags: #[domain] #[type]
+```
+
+### Decision Capture
+
+| Event | Capture Action | Priority |
+|-------|----------------|----------|
+| Architecture choice made | `taskctl memory add --type decision "[choice and rationale]"` | HIGH |
+| Technology selected | `taskctl memory add --type decision "[tech and why]"` | HIGH |
+| Trade-off resolved | `taskctl memory add --type decision "[trade-off and resolution]"` | MEDIUM |
+
+**Decision Template:**
+```markdown
+## [Date] - [Decision Title]
+
+**Context:** What prompted this decision
+**Options Considered:**
+1. Option A - pros/cons
+2. Option B - pros/cons
+
+**Decision:** What we chose
+**Rationale:** Why we chose it
+**Consequences:** What this means for future work
+
+Tags: #[domain] #[scope]
+```
+
+### Memory Capture Procedure
+
+```
+After follow-up completes:
+  if follow_up.found_issues AND memory.enabled:
+    # Capture as pitfall
+    issue_summary = extract_issue_summary(follow_up.result)
+    taskctl memory add --type pitfall "$issue_summary"
+
+  if follow_up.established_pattern AND memory.enabled:
+    # Capture as convention
+    pattern_desc = extract_pattern(follow_up.result)
+    taskctl memory add --type convention "$pattern_desc"
+
+  if track.made_decision AND memory.enabled:
+    # Capture as decision
+    decision_desc = extract_decision(track.output)
+    taskctl memory add --type decision "$decision_desc"
+```
+
 ## Autonomous Behavior Rules
 
 1. **No User Checkpoints**: Follow-ups execute automatically
@@ -277,6 +369,7 @@ Investigate and fix errors:
 3. **Completion Required**: Task not done until all follow-ups pass
 4. **Escalation Path**: Critical issues surface to synthesis phase
 5. **Parallel Execution**: Non-conflicting follow-ups run simultaneously
+6. **Memory Capture**: Learnings automatically saved when memory enabled
 
 ## Quality Checklist
 

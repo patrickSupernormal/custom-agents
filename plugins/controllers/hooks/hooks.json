@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Workflow enforcement hooks for custom-agents orchestration",
+  "version": "1.0.0",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "description": "Ensure worker has re-anchored before editing files",
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PLUGIN_ROOT/plugins/controllers/hooks/pre-edit-guard.sh"
+          }
+        ]
+      },
+      {
+        "description": "Ensure worker has re-anchored before writing files",
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PLUGIN_ROOT/plugins/controllers/hooks/pre-write-guard.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "description": "Verify task state after Bash commands",
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PLUGIN_ROOT/plugins/controllers/hooks/post-bash-guard.sh"
+          }
+        ]
+      }
+    ]
+  },
+  "notes": {
+    "activation": "Copy relevant hook entries to ~/.claude/settings.json or project .claude/settings.json",
+    "environment": "Hooks receive tool input as JSON on stdin",
+    "blocking": "Exit code 0 = allow, non-zero = block with stderr message"
+  }
+}
